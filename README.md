@@ -24,8 +24,8 @@ If path given is just a directory - append VERSION.txt to it and see if it is a 
 
 ### Methods:
 
-- get_version(path=VERSION.txt): interface for other modules, will contact _reader() to get the version number.
-    - parameter: path (str), file name (can be whole path), default = VERSION.txt
+- get_version(root, file): interface for other modules, will contact _reader() to get the version number.
+    - parameter: root (str), project's root directory (relative or absolute)
     - returns: string with the version number
   
 - user(): interface for user, allows deciding if version found is correct.
