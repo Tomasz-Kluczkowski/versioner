@@ -24,12 +24,19 @@ If path given is just a directory - append VERSION.txt to it and see if it is a 
 
 ### Methods:
 
-- get_version(root, file): interface for other modules, will contact _reader() to get the version number.
+- get_version(root, file, prompt): interface for other modules, will contact _reader() to get the version number.
     - parameter: root (str), project's root directory (relative or absolute)
+    - parameter: file (str), file with the version number
+    - prompt: (bool) default = True, ask user if version is correct initially.
+    
     - returns: string with the version number
   
 - user(): interface for user, allows deciding if version found is correct.
-    - parameter: 
+    If prompt = True, ask user if version number read from file is correct.
+    If not ask if they want to give a new one (save it to file) or abort (and the user wants to edit the version file manually)
+    
+    - parameter:
+    
     - return: bool, true - proceed, false - quit
     
 - _search_file(root, path): private method, searches for a file with the version number using os.walk.
