@@ -87,7 +87,7 @@ class Versioner(object):
         Returns:
             ver_num (str): Version number.
         """
-        self.root = root
+        self.root = os.path.abspath(root)
         self.file = file
 
         self._search_file()
@@ -132,3 +132,4 @@ class Versioner(object):
 # if __name__ == "__main__":
 #     v = Versioner()
 #     v.get_version(file="non_def_version.txt")
+
