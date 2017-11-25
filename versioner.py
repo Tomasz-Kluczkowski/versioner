@@ -16,8 +16,6 @@ class Versioner(object):
         """
         self.root = root
         self.file = file
-        self._found = False
-        """Status of the version file search."""
         self._true_path = ""
         """Confirmed path to the version file."""
         self._ver_num = None
@@ -27,6 +25,10 @@ class Versioner(object):
         """Attempts to find version file from path given in file or
         combination of root/file. If not possible will search for it
         recursively starting at the root.
+
+        Returns:
+            (str) | (None): String representing a valid path to the
+            version file or None if not found.
         """
         # Sanity checks here.
         if not os.path.isdir(self.root):
@@ -37,26 +39,24 @@ class Versioner(object):
 
         # Confirm if file is a valid path to the version file.
         if os.path.isfile(self.file):
-            self._found = True
-            self._true_path = self.file
+
+            return self.file
 
         # Confirm if root/file is a valid path to the version file.
         elif os.path.isfile(path):
-            self._found = True
-            self._true_path = path
+
+            return path
 
         # otherwise search for it
         else:
             for cur_root, dirs, files in os.walk(top_dir):
                 for file in files:
                     if file == self.file:
-                        self._found = True
-                        self._true_path = os.path.join(cur_root, file)
 
-        # if not found raise an exception
-        if not self._found:
-            raise ValueError(
-                "Version file missing, please check parameters / folders.")
+                        return os.path.join(cur_root, file)
+
+        # If not found return None.
+        return None
 
     @staticmethod
     def _read_file(path):
@@ -79,7 +79,8 @@ class Versioner(object):
 
         Args:
             root (str): Project's root directory for the search (can be
-                relative or absolute).
+                relative or absolute) Assumption is that build script
+                is run from a subfoler of the project's root.
             file (str): File with the version number.
             prompt (bool): Check if user interaction should be enabled
                 at initial stage of getting version number.
@@ -90,14 +91,19 @@ class Versioner(object):
         self.root = os.path.abspath(root)
         self.file = file
 
-        self._search_file()
+        result = self._search_file()
+        if result is None:
+            raise ValueError(
+                "Version file missing, please check parameters / folders.")
+        else:
+            self._true_path = result
+
         self._ver_num = self._read_file(self._true_path)
 
         if prompt:
             if self.user():
                 return self._ver_num
             else:
-                pass
                 sys.exit("Version number not accepted. User abort")
 
         return self._ver_num
@@ -106,7 +112,8 @@ class Versioner(object):
         """Allows interaction with the user.
 
         Returns:
-            (bool):
+            (bool): Confirmation from the user if the version number
+                found is correct.
 
         """
         if platform.system() == "Windows":
