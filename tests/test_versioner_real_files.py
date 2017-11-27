@@ -42,19 +42,17 @@ def versioner():
 
 
 @pytest.fixture()
-def mock_input_yes():
+def mock_input_yes(monkeypatch):
     mock_input = mock.Mock()
     mock_input.return_value = "y"
-
-    return mock_input
+    monkeypatch.setattr("builtins.input", mock_input)
 
 
 @pytest.fixture()
-def mock_input_no():
+def mock_input_no(monkeypatch):
     mock_input = mock.Mock()
     mock_input.return_value = "n"
-
-    return mock_input
+    monkeypatch.setattr("builtins.input", mock_input)
 
 
 # Tests without user interaction below
@@ -78,14 +76,14 @@ def test_get_version_with_valid_file_path(versioner):
 def test_get_version_with_incorrect_root(versioner):
     """Tests if exception is raised when root is not a valid directory."""
 
-    with pytest.raises(ValueError,
-                       message="Project's root must be a valid directory."):
+    with pytest.raises(NotADirectoryError) as info:
         versioner.get_version(root="/home/yolo420", prompt=False)
+    assert str(info.value) == "Project's root must be a valid directory."
 
 
 def test_get_version_with_absolute_path_to_root(versioner):
     """Tests if version number is returned when absolute path to
-    projects root is given and default VERSION.txt is used a a file."""
+    projects root is given and default VERSION.txt is used as a file."""
 
     assert versioner.get_version(
         root="/home/tomasz_kluczkowski/Dev/versioner", prompt=False) == "1.02"
@@ -122,26 +120,22 @@ def test_get_version_searching_for_invalid_version_file(versioner):
 
 
 # Test basic user interaction below
-def test_user_input_yes(monkeypatch, versioner, mock_input_yes):
+def test_user_input_yes(versioner, mock_input_yes):
     """Tests user for response yes."""
 
-    monkeypatch.setattr("builtins.input", mock_input_yes)
     assert versioner.user() is True
 
 
-def test_user_input_no(monkeypatch, versioner, mock_input_no):
+def test_user_input_no(versioner, mock_input_no):
     """Tests user for response yes."""
 
-    monkeypatch.setattr("builtins.input", mock_input_no)
     assert versioner.user() is False
 
 
 # Test getting version number with user interaction below
-def test_get_version_with_user_input_yes(monkeypatch, versioner,
-                                         mock_input_yes):
+def test_get_version_with_user_input_yes(versioner, mock_input_yes):
     """Tests get_version with user response = "y"."""
 
-    monkeypatch.setattr("builtins.input", mock_input_yes)
     assert versioner.get_version() == "1.02"
     assert versioner.get_version(file="/home/tomasz_kluczkowski/Dev/versioner/"
                                       "version_dir/test_1/test_2/"
@@ -152,11 +146,10 @@ def test_get_version_with_user_input_yes(monkeypatch, versioner,
                                  file="test_version.txt") == "1.00"
 
 
-def test_get_version_user_abort(monkeypatch, versioner, mock_input_no):
+def test_get_version_user_abort(versioner, mock_input_no):
     """Tests if script exits when user does not accept version number
     from the file found."""
 
-    monkeypatch.setattr("builtins.input", mock_input_no)
     with pytest.raises(SystemExit) as my_exit:
 
         versioner.get_version()

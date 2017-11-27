@@ -18,7 +18,7 @@ class Versioner(object):
         self.file = file
         self._true_path = ""
         """Confirmed path to the version file."""
-        self._ver_num = None
+        self._ver_num = ""
         """Version number obtained from the version file."""
 
     def _search_file(self):
@@ -32,7 +32,7 @@ class Versioner(object):
         """
         # Sanity checks here.
         if not os.path.isdir(self.root):
-            raise ValueError("Project's root must be a valid directory.")
+            raise NotADirectoryError("Project's root must be a valid directory.")
 
         path = os.path.join(self.root, self.file)
         top_dir = self.root
@@ -104,7 +104,7 @@ class Versioner(object):
             if self.user():
                 return self._ver_num
             else:
-                sys.exit("Version number not accepted. User abort")
+                raise SystemExit("Version number not accepted. User abort")
 
         return self._ver_num
 
@@ -135,8 +135,4 @@ class Versioner(object):
             else:
                 return False
 
-# Examples
-# if __name__ == "__main__":
-#     v = Versioner()
-#     v.get_version(file="non_def_version.txt")
 
