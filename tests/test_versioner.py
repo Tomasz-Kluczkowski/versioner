@@ -1,7 +1,7 @@
 import pytest
 
 from unittest import mock
-from versioner import Versioner
+from versioner.versioner import Versioner
 
 
 @pytest.fixture()
