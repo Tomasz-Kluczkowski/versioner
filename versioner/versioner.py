@@ -42,12 +42,12 @@ class Versioner(object):
 
             return self.file
 
-        # Confirm if root/file is a valid path to the version file.
+        # Or confirm if root/file is a valid path to the version file.
         elif os.path.isfile(path):
 
             return path
 
-        # otherwise search for it
+        # Otherwise search for it.
         else:
             for cur_root, dirs, files in os.walk(top_dir):
                 for file in files:
@@ -138,5 +138,4 @@ class Versioner(object):
                 return True
             else:
                 return False
-
 
