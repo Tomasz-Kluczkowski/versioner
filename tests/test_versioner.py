@@ -37,7 +37,7 @@ def mock_is_dir_true(monkeypatch):
     """Fake directory exists."""
     mock_is_dir = mock.Mock()
     mock_is_dir.return_value = True
-    monkeypatch.setattr("versioner.os.path.isdir", mock_is_dir)
+    monkeypatch.setattr("versioner.versioner.os.path.isdir", mock_is_dir)
 
 
 @pytest.fixture()
@@ -45,7 +45,7 @@ def mock_is_dir_false(monkeypatch):
     """Fake directory does not exist."""
     mock_is_dir = mock.Mock()
     mock_is_dir.return_value = False
-    monkeypatch.setattr("versioner.os.path.isdir", mock_is_dir)
+    monkeypatch.setattr("versioner.versioner.os.path.isdir", mock_is_dir)
 
 
 @pytest.fixture()
@@ -53,7 +53,7 @@ def mock_is_file_true(monkeypatch):
     """Confirm file exists."""
     mock_is_file = mock.Mock()
     mock_is_file.return_value = True
-    monkeypatch.setattr("versioner.os.path.isfile", mock_is_file)
+    monkeypatch.setattr("versioner.versioner.os.path.isfile", mock_is_file)
 
 
 @pytest.fixture()
@@ -61,7 +61,7 @@ def mock_is_file_false(monkeypatch):
     """Confirm file does not exist."""
     mock_is_file = mock.Mock()
     mock_is_file.return_value = False
-    monkeypatch.setattr("versioner.os.path.isfile", mock_is_file)
+    monkeypatch.setattr("versioner.versioner.os.path.isfile", mock_is_file)
 
 
 @pytest.fixture()
@@ -69,7 +69,7 @@ def mock_is_path_true(monkeypatch):
     """Confirm joined paths root/file exist."""
     mock_is_file = mock.Mock()
     mock_is_file.side_effect = [False, True]
-    monkeypatch.setattr("versioner.os.path.isfile", mock_is_file)
+    monkeypatch.setattr("versioner.versioner.os.path.isfile", mock_is_file)
 
 
 @pytest.fixture()
@@ -79,7 +79,7 @@ def mock_os_walk(monkeypatch):
     _mock_os_walk.return_value = [
         ("/home/tomasz_kluczkowski/Dev/versioner/", [],
          ["test_version.txt"]), ]
-    monkeypatch.setattr("versioner.os.walk", _mock_os_walk)
+    monkeypatch.setattr("versioner.versioner.os.walk", _mock_os_walk)
 
 
 # Tests without user interaction below.
