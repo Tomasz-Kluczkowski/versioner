@@ -69,10 +69,14 @@ class Versioner(object):
             ver_num (str):  Version number.
 
         """
-        with open(path) as file:
-            ver_num = file.read()
+        try:
+            with open(path) as file:
+                ver_num = file.read()
 
-        return ver_num
+            return ver_num
+
+        except IOError as info:
+            print("IO Error, ({0}): {1}".format(info.errno, info.strerror))
 
     def get_version(self, root="../", file="VERSION.txt", prompt=True):
         """Obtains version number from a file.

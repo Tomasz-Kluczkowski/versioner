@@ -1,13 +1,7 @@
 import pytest
-import os
 
 from unittest import mock
 from versioner import Versioner
-
-root = "../"
-test_dir_root = "version_dir"
-test_dir_1 = os.path.join(root, test_dir_root, "test_1")
-test_dir_2 = os.path.join(test_dir_1, "test_2")
 
 
 @pytest.fixture()
@@ -16,19 +10,19 @@ def versioner():
 
 
 @pytest.fixture()
-def mock_input_yes():
+def mock_input_yes(monkeypatch):
+    """Simulates user input character y."""
     mock_input = mock.Mock()
     mock_input.return_value = "y"
-
-    return mock_input
+    monkeypatch.setattr("builtins.input", mock_input)
 
 
 @pytest.fixture()
-def mock_input_no():
-    mock_input = mock.Mock()
-    mock_input.return_value = "n"
-
-    return mock_input
+def mock_input_no(monkeypatch):
+    """Simulates user input character n."""
+    mock_input_n = mock.Mock()
+    mock_input_n.return_value = "n"
+    monkeypatch.setattr("builtins.input", mock_input_n)
 
 
 @pytest.fixture()
@@ -40,7 +34,7 @@ def mock_open_fix(monkeypatch):
 
 @pytest.fixture()
 def mock_is_dir_true(monkeypatch):
-    """Confirm directory exists."""
+    """Fake directory exists."""
     mock_is_dir = mock.Mock()
     mock_is_dir.return_value = True
     monkeypatch.setattr("versioner.os.path.isdir", mock_is_dir)
@@ -48,7 +42,7 @@ def mock_is_dir_true(monkeypatch):
 
 @pytest.fixture()
 def mock_is_dir_false(monkeypatch):
-    """Confirm directory exists."""
+    """Fake directory does not exist."""
     mock_is_dir = mock.Mock()
     mock_is_dir.return_value = False
     monkeypatch.setattr("versioner.os.path.isdir", mock_is_dir)
@@ -64,7 +58,7 @@ def mock_is_file_true(monkeypatch):
 
 @pytest.fixture()
 def mock_is_file_false(monkeypatch):
-    """Confirm file exists."""
+    """Confirm file does not exist."""
     mock_is_file = mock.Mock()
     mock_is_file.return_value = False
     monkeypatch.setattr("versioner.os.path.isfile", mock_is_file)
@@ -72,7 +66,7 @@ def mock_is_file_false(monkeypatch):
 
 @pytest.fixture()
 def mock_is_path_true(monkeypatch):
-    """Confirm root/file exists."""
+    """Confirm joined paths root/file exist."""
     mock_is_file = mock.Mock()
     mock_is_file.side_effect = [False, True]
     monkeypatch.setattr("versioner.os.path.isfile", mock_is_file)
@@ -80,7 +74,7 @@ def mock_is_path_true(monkeypatch):
 
 @pytest.fixture()
 def mock_os_walk(monkeypatch):
-    """Return result from a file search."""
+    """Return a valid result from a file search."""
     _mock_os_walk = mock.Mock()
     _mock_os_walk.return_value = [
         ("/home/tomasz_kluczkowski/Dev/versioner/", [],
@@ -88,7 +82,7 @@ def mock_os_walk(monkeypatch):
     monkeypatch.setattr("versioner.os.walk", _mock_os_walk)
 
 
-# Tests without user interaction below
+# Tests without user interaction below.
 def test_get_version_with_incorrect_root(versioner):
     """Tests if exception is raised when root is not a valid directory."""
 
@@ -166,38 +160,38 @@ def test_get_version_searching_for_invalid_version_file(mock_open_fix,
         info.value) == "Version file missing, please check parameters / folders."
 
 
-# Test basic user interaction below
-def test_user_input_yes(monkeypatch, versioner, mock_input_yes):
+# Test basic user interaction below.
+def test_user_input_yes(versioner, mock_input_yes):
     """Tests user for response yes."""
 
-    monkeypatch.setattr("builtins.input", mock_input_yes)
     assert versioner.user() is True
 
 
-def test_user_input_no(monkeypatch, versioner, mock_input_no):
+def test_user_input_no(versioner, mock_input_no):
     """Tests user for response yes."""
 
-    monkeypatch.setattr("builtins.input", mock_input_no)
     assert versioner.user() is False
 
 
-# Test getting version number with user interaction below
-def test_get_version_with_user_input_yes(monkeypatch, mock_open_fix,
+# Test getting version number with user interaction below.
+def test_get_version_with_user_input_yes(mock_open_fix,
                                          mock_is_dir_true, mock_is_file_true,
                                          mock_input_yes, versioner):
-    """Tests get_version with user response = "y"."""
+    """Tests get_version with user response = "y" Use default root and
+    file."""
 
-    monkeypatch.setattr("builtins.input", mock_input_yes)
     assert versioner.get_version() == "1.02"
 
 
-def test_get_version_user_abort(monkeypatch, versioner, mock_input_no):
+def test_get_version_user_abort(mock_open_fix,
+                                mock_is_dir_true, mock_is_file_true,
+                                mock_input_no, versioner):
     """Tests if script exits when user does not accept version number
     from the file found."""
 
-    monkeypatch.setattr("builtins.input", mock_input_no)
     with pytest.raises(SystemExit) as info:
         versioner.get_version()
+
     assert str(info.value) == "Version number not accepted. User abort"
 
 
