@@ -4,12 +4,13 @@ import shutil
 import os
 
 from unittest import mock
-from versioner import Versioner
+from version_hunter.versioner import Versioner
 
 root = "../"
 test_dir_root = "version_dir"
 test_dir_1 = os.path.join(root, test_dir_root, "test_1")
 test_dir_2 = os.path.join(test_dir_1, "test_2")
+
 
 @pytest.fixture(scope="session", autouse="True")
 def test_dir_setup():
