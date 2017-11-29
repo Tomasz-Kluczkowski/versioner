@@ -7,8 +7,9 @@ from unittest import mock
 from version_hunter.versioner import Versioner
 
 root = "../"
+abs_root = os.path.abspath(root)
 test_dir_root = "version_dir"
-test_dir_1 = os.path.join(root, test_dir_root, "test_1")
+test_dir_1 = os.path.join(abs_root, test_dir_root, "test_1")
 test_dir_2 = os.path.join(test_dir_1, "test_2")
 
 
@@ -26,13 +27,13 @@ def test_version_files_setup():
     """Create version files required for tests.
     Destroy after session."""
     files = ["VERSION.txt", "non_def_version.txt", "test_version.txt"]
-    paths = [root, test_dir_1, test_dir_2]
+    paths = [abs_root, test_dir_1, test_dir_2]
     versions = ["1.02", "2.01", "1.00"]
     for path, file, version in zip(paths, files, versions):
         with open(os.path.join(path, file), "w+") as test_version_file:
             test_version_file.write(version)
     yield None
-    os.remove(paths[0] + files[0])
+    os.remove(os.path.join(paths[0], files[0]))
     # The rest of the version files get removed when the test folders
     # get deleted.
 
@@ -68,8 +69,7 @@ def test_get_version_with_valid_file_path(versioner):
     """Tests if version is returned when full path to version file is
     given as the file parameter with the default root."""
 
-    assert versioner.get_version(file="/home/tomasz_kluczkowski/Dev/versioner/"
-                                      "version_dir/test_1/test_2/"
+    assert versioner.get_version(file="../version_dir/test_1/test_2/"
                                       "test_version.txt",
                                  prompt=False) == "1.00"
 
@@ -87,7 +87,7 @@ def test_get_version_with_absolute_path_to_root(versioner):
     projects root is given and default VERSION.txt is used as a file."""
 
     assert versioner.get_version(
-        root="/home/tomasz_kluczkowski/Dev/versioner", prompt=False) == "1.02"
+        root=abs_root, prompt=False) == "1.02"
 
 
 def test_get_version_with_absolute_path_to_root_and_non_default_file(versioner):
@@ -95,7 +95,7 @@ def test_get_version_with_absolute_path_to_root_and_non_default_file(versioner):
     projects root and a non default version file is given ."""
 
     assert versioner.get_version(
-        root="/home/tomasz_kluczkowski/Dev/versioner/version_dir/test_1",
+        root=test_dir_1,
         file="non_def_version.txt", prompt=False) == "2.01"
 
 
@@ -103,7 +103,7 @@ def test_get_version_searching_for_version_file(versioner):
     """Tests searching for the file containing version number starting
     from the root."""
 
-    assert versioner.get_version(root="/home/tomasz_kluczkowski/Dev/versioner",
+    assert versioner.get_version(root=abs_root,
                                  file="test_version.txt",
                                  prompt=False) == "1.00"
 
@@ -116,7 +116,7 @@ def test_get_version_searching_for_invalid_version_file(versioner):
                        message="Version file missing,"
                                " please check parameters / folders."):
         assert versioner.get_version(
-            root="/home/tomasz_kluczkowski/Dev/versioner",
+            root=abs_root,
             file="blah_test_version.txt", prompt=False)
 
 
@@ -138,13 +138,10 @@ def test_get_version_with_user_input_yes(versioner, mock_input_yes):
     """Tests get_version with user response = "y"."""
 
     assert versioner.get_version() == "1.02"
-    assert versioner.get_version(file="/home/tomasz_kluczkowski/Dev/versioner/"
-                                      "version_dir/test_1/test_2/"
-                                      "test_version.txt") == "1.00"
-    assert versioner.get_version(
-        root="/home/tomasz_kluczkowski/Dev/versioner") == "1.02"
-    assert versioner.get_version(root="/home/tomasz_kluczkowski/Dev/versioner",
-                                 file="test_version.txt") == "1.00"
+    assert versioner.get_version(file=os.path.join(test_dir_2,
+                                                   "test_version.txt")) == "1.00"
+    assert versioner.get_version(root=abs_root) == "1.02"
+    assert versioner.get_version(root=abs_root, file="test_version.txt") == "1.00"
 
 
 def test_get_version_user_abort(versioner, mock_input_no):
