@@ -1,50 +1,65 @@
 # VERSIONING HELPER FOR MY PROJECTS
 
-The goal of this class is to provide an easy way to implement version changes when building a newer version of an application.
-It would be nice to be able to store latest version and have an increment system in place but initially all I want to do is to read VERSION.txt file with a version number, ask user if this is the number they want to use for the newest build and go from there further.
+The goal of this class is to provide an easy way to implement version changes when building an application using cx_Freeze / Inno Setup.
+All you need in the most basic situation is a version file in the root of your project directory.
+get_version(self, root="../", file="VERSION.txt", prompt=True) 
 
+# Installation
 
-# Specification
+Download the package from github.
+cd <where you put version_hunter package>
+Run this command in the terminal:
 
-- input:
-    - reads a line containing a version number from VERSION.txt and stores it in a string.
-    - asks user if this is the correct version number to be used for the build.
+<pre><code>
+python setup.py install
 
-- output:
+# Or for development use:
 
-    - returns string with the version number
-    
-# Design
+python setup.py develop
+</code></pre>
 
-Create class Versioner. Default file to store version is: VERSION.txt
-Add a search for first VERSION.txt file available. Use os.walk and check each path for VERSION.txt
-In case of path given make sure that it is a file os.path.isfile() and just read it.
-If nothing given or only project root - use os.walk to find the first path to VERSION.TXT
-If path given is just a directory - append VERSION.txt to it and see if it is a file and read it.
+#Examples
 
-### Methods:
+####Using a typical project structure as below:
 
-- get_version(root, file, prompt): interface for other modules, will contact _reader() to get the version number.
-    - parameter: root (str), project's root directory (relative or absolute)
-    - parameter: file (str), file with the version number
-    - prompt: (bool) default = True, ask user if version is correct initially.
-    
-    - returns: string with the version number
-  
-- user(): interface for user, allows deciding if version found is correct.
-    If prompt = True, ask user if version number read from file is correct.
-    If not ask if they want to give a new one (save it to file) or abort (and the user wants to edit the version file manually)
-    
-    - parameter:
-    
-    - return: bool, true - proceed, false - quit
-    
-- _search_file(root, path): private method, searches for a file with the version number using os.walk.
-    - parameter: path (str), file name (can be whole path)
-    - root (str) project root directory
-    - calls user() asking if correct version number found.
-    - returns: string with the version number
+Project/
+|-- build_scripts/
+|   |-- cx_freeze_script
+|
+|-- project/
+|   |-- tests/
+|   |   |-- __init__.py
+|   |   |-- test_main.py
+|   |   
+|   |-- __init__.py
+|   |-- main.py
+|
+|-- VERSION.txt
+|-- setup.py
+|-- README.md
 
-- _read_file(path): private method, reads first line of the file and returns version number.
-    - parameter: path (tr), file name (path to a valid file with the version number) 
+### The simplest case
+Your version file is named VERSION.txt and it sits in the root of the project (default settings).
+The build script is in a subfolder of root and from there the root can be reached by cd ../
+This is the default setting for get_version() method.
+
+<pre><code>
+from version_hunter import Versioner
+v = Versioner()
+version = v.get_version() # Returns for example: 1.0.2
+
+# Use it in your setup:
+cx_Freeze.setup(
+    name='Your App',
+    version=version, # This is where it gets added to the exe's attributes
+    description='Your application',
+    author='John Smith',
+    author_email='jsmith@gmail.com',
+    options={'build_exe': {'includes': includes,
+                           'excludes': excludes,
+                           'packages': packages,
+                           'include_files': include_files}},
+    executables=executables)
+</code></pre>
+
 
