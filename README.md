@@ -5,26 +5,27 @@ All you need in the most basic situation is a version file in the root of your p
 
 # Installation
 
+### Install package using pip
+
+<pre><code>pip install version-hunter
+</code></pre>
+
+### Or if you prefer using the source code
+
 Download the source code for version-hunter package from github or pypi.
-cd <where you put version-hunter package>
-Run this command in the terminal:
 
-<pre><code>
+Open terminal.
+<pre><code>cd [path to where you put version-hunter package]
 python setup.py install
+</code></pre>
 
-# Or for development use:
-
-python setup.py develop
-
-
-Or install it using pip:
-
-pip install version-hunter
+### Or for development use:
+<pre><code>python setup.py develop
 </code></pre>
 
 ### Main method to obtain version numbers and usage
 
-<pre>
+<pre><code>
 get_version(self, root="../", file="VERSION.txt", prompt=True):
     """Obtains version number from a file.
 
@@ -40,7 +41,7 @@ get_version(self, root="../", file="VERSION.txt", prompt=True):
     Returns:
         ver_num (str): Version number.
     """
-</pre>
+</code></pre>
 If prompt is set to _False_, get_version() searches for the version file and returns the text in its first line without any user interaction.
 
 If prompt is set to _True_ (default) user will be presented with the version number found in the terminal and asked if it should be used. If user chooses not to use it the script aborts with system exit code 1 interrupting cx_Freeze script before it is able to build the application (which is what we want at that stage).
@@ -76,8 +77,7 @@ These are the default setting for get_version() method.
 
 ### How to implement it in your cx_Freeze script:
 Below code assumes the default settings described in "The simplest case".
-<pre><code>
-from version_hunter import Versioner
+<pre><code>from version_hunter import Versioner
 v = Versioner()
 version = v.get_version() # Returns version number.
 
@@ -106,8 +106,7 @@ The class is quite flexible and allows user to choose a variety of ways to navig
 #### Absolute path to the version file given
 This will try to open the file using the path given. 
 
-<pre><code>
-from version_hunter import Versioner
+<pre><code>from version_hunter import Versioner
 v = Versioner()
 version = v.get_version(file="~/Dev/My_project/VERSION.txt") # Returns version number.
 </code></pre>
@@ -115,8 +114,7 @@ version = v.get_version(file="~/Dev/My_project/VERSION.txt") # Returns version n
 #### Paths to project's root and version file name given
 This will join the root and file name and see if the file exists. If not it will attempt to find it recursively.
 
-<pre><code>
-from version_hunter import Versioner
+<pre><code>from version_hunter import Versioner
 v = Versioner()
 version = v.get_version(root="~/Dev/My_project, file="ver_file.txt") # Returns version number.
 </code></pre>
@@ -124,16 +122,14 @@ version = v.get_version(root="~/Dev/My_project, file="ver_file.txt") # Returns v
 #### Only the version file name given, uses default root="../"
 This will search recursively in the project's folder and all subfolders until first instance of the file is found.
 
-<pre><code>
-from version_hunter import Versioner
+<pre><code>from version_hunter import Versioner
 v = Versioner()
 version = v.get_version(file="ver_file.txt") # Returns version number.
 </code></pre>
 
 ### Reporting of missing version files:
 If the version file is not found version_hunter reports it to the user raising an exception and aborting the build process.
-
-/home/tomasz_kluczkowski/.virtualenvs/versioner_env/bin/python /home/tomasz_kluczkowski/Dev/versioner/version_hunter/versioner.py
+<pre><code>/home/tomasz_kluczkowski/.virtualenvs/versioner_env/bin/python /home/tomasz_kluczkowski/Dev/versioner/version_hunter/versioner.py
 Traceback (most recent call last):
   File "/home/tomasz_kluczkowski/Dev/versioner/version_hunter/versioner.py", line 143, in <module>
     version_num = v.get_version(file="~/Dev/versioner/tst/erer/ver.txt")
@@ -142,3 +138,4 @@ Traceback (most recent call last):
 ValueError: Version file missing, please check parameters / folders.
 
 Process finished with exit code 1
+</code></pre>
