@@ -1,5 +1,3 @@
-# VERSIONING HELPER FOR MY PROJECTS
+VERSIONING HELPER FOR CX_FREEZE BUILDS (AND NOT ONLY)
 
-The goal of this class is to provide an easy way to implement version changes when building a newer version of an application.
-Mainly for Cx_Freeze and Inno Setup use.
-It would be nice to be able to store latest version and have an increment system in place but initially all I want to do is to read VERSION.txt file with a version number, ask user if this is the number they want to use for the newest build and go from there further.
+The goal of this program is to provide an easy way to implement version changes when building an application using cx_Freeze / Inno Setup. All you need in the most basic situation is a version file in the root of your project directory.

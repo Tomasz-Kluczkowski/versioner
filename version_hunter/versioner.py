@@ -1,6 +1,9 @@
 import os
 import platform
 
+# TODO: Add increment version option to the user interface.
+# TODO: Add logging of successfully build versions.
+
 
 class Versioner(object):
     """Helper class allowing easy version number changes when building apps."""
@@ -84,7 +87,8 @@ class Versioner(object):
             root (str): Project's root directory for the search (can be
                 relative or absolute) Assumption is that build script
                 is run from a subfoler of the project's root.
-            file (str): File with the version number.
+            file (str): File with the version number. Can be just the name
+                or relative / absolute path.
             prompt (bool): Check if user interaction should be enabled
                 at initial stage of getting version number.
 
