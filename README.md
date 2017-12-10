@@ -5,8 +5,8 @@ All you need in the most basic situation is a version file in the root of your p
 
 # Installation
 
-Download the version_hunter package from github.
-cd <where you put version_hunter package>
+Download the source code for version-hunter package from github or pypi.
+cd <where you put version-hunter package>
 Run this command in the terminal:
 
 <pre><code>
@@ -15,6 +15,11 @@ python setup.py install
 # Or for development use:
 
 python setup.py develop
+
+
+Or install it using pip:
+
+pip install version-hunter
 </code></pre>
 
 ### Main method to obtain version numbers and usage
