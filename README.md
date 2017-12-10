@@ -40,9 +40,9 @@ If prompt is set to _False_, get_version() searches for the version file and ret
 
 If prompt is set to _True_ (default) user will be presented with the version number found in the terminal and asked if it should be used. If user chooses not to use it the script aborts with system exit code 1 interrupting cx_Freeze script before it is able to build the application (which is what we want at that stage).
 
-#Examples
+# Examples
 
-####Assuming a typical project structure as below:
+#### Assuming a typical project structure as below:
 <pre>
 Project/
 |-- build_scripts/
